@@ -7,11 +7,42 @@
 @plugin "daisyui/theme" {
   name: "light";
   default: true;
-  --color-primary: red;
+  --color-primary: linear-gradient(90deg, #632ee3 0%, #9f62f2 100%);
   --color-secondary: teal;
+}
+
+body {
+  max-width: 1600px;
+  margin: 0 auto;
 }
 
 .btn-primary {
   background-image: var(--color-primary);
   color: white;
+}
+
+.text-gradient {
+  font-weight: bold;
+  /* Gradient background */
+  background: linear-gradient(
+    125.07deg,
+    rgba(99, 46, 227, 1),
+    rgba(159, 98, 242, 1)
+  );
+  /* Clip background to text */
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+
+  /* Firefox support */
+  background-clip: text;
+  color: transparent;
+}
+
+.active {
+  font-weight: bold;
+  background: linear-gradient(90deg, #632ee3 0%, #9f62f2 100%);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+  color: transparent;
 }
