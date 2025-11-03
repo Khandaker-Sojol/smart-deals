@@ -29,27 +29,29 @@ const AuthProvider = ({ children }) => {
   };
 
   const signInWithGoogle = () => {
-    signInWithPopup(auth, googleProvider);
+    setLoading(true);
+    return signInWithPopup(auth, googleProvider);
   };
 
   const logOutUser = () => {
-    signOut(auth);
+    return signOut(auth);
   };
 
   const updateUserProfile = (displayName, photoURL) => {
-    updateProfile(auth.currentUser, {
+    return updateProfile(auth.currentUser, {
       displayName,
       photoURL,
     });
   };
 
   const resetPassword = (email) => {
-    sendPasswordResetEmail(auth, email);
+    return sendPasswordResetEmail(auth, email);
   };
 
   useEffect(() => {
     const unSubscribe = onAuthStateChanged(auth, (currentUser) => {
       setUser(currentUser);
+      setLoading(false);
     });
 
     return () => {

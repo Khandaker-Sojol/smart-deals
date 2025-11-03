@@ -1,21 +1,33 @@
-import React from "react";
-import { NavLink } from "react-router";
-import avatar from "/images/thumb-profile.png";
+import React, { use } from "react";
+import { Link, NavLink } from "react-router";
+// import avatar from "/images/thumb-profile.png";
+import { AuthContext } from "../../context/AuthContext";
 
 const Navbar = () => {
+  const { user, logOutUser } = use(AuthContext);
+  console.log(user);
+
   const navLinks = (
     <>
       <NavLink to="/">Home</NavLink>
-
+      <NavLink to="/auth/login">Login</NavLink>
+      <NavLink to="/auth/register">Registration</NavLink>
       <NavLink to="/all-products">All Products</NavLink>
-
       <NavLink to="/my-products">My Products</NavLink>
-
       <NavLink to="/my-bids">My Bids</NavLink>
-
       <NavLink to="/create-product">Create Product</NavLink>
     </>
   );
+
+  const handleLogOut = () => {
+    logOutUser()
+      .then(() => {
+        alert("SignOut successfully");
+      })
+      .catch((error) => {
+        console.log(error);
+      });
+  };
   return (
     <div className="navbar shadow-sm bg-[#FFFFFF] md:px-12">
       <div className="navbar-start">
@@ -44,7 +56,7 @@ const Navbar = () => {
             {navLinks}
           </ul>
         </div>
-        <a className="text-3xl font-bold text-[#001931]">
+        <a className="text-2xl md:text-3xl font-bold text-[#001931]">
           Smart<span className="text-gradient ">Deals</span>
         </a>
       </div>
@@ -53,8 +65,21 @@ const Navbar = () => {
           {navLinks}
         </ul>
       </div>
-      <div className="navbar-end">
-        <img src={avatar} alt="" />
+      <div className="navbar-end gap-5">
+        {user ? (
+          <div className="flex items-center gap-3">
+            <img className="rounded-full w-12" src={user.photoURL} alt="" />
+            <a onClick={handleLogOut} className="btn">
+              {" "}
+              SignOut
+            </a>
+          </div>
+        ) : (
+          <Link to="/auth/login" className="btn">
+            {" "}
+            Login
+          </Link>
+        )}
       </div>
     </div>
   );

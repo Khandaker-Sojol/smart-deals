@@ -5,6 +5,10 @@ import All_Products from "../pages/All_Products";
 import My_Products from "../pages/My_Products";
 import My_bids from "../pages/My_bids";
 import Create_Product from "../pages/Create_Product";
+import Login from "../pages/Login";
+import Registration from "../pages/Registration";
+import AuthLayouts from "../layouts/AuthLayouts";
+import PrivateRoute from "../components/ProtectedRoute/PrivateRoute";
 
 export const router = createBrowserRouter([
   {
@@ -17,7 +21,12 @@ export const router = createBrowserRouter([
       },
       {
         path: "/all-products",
-        Component: All_Products,
+        loader: () => fetch("http://localhost:3000/products"),
+        element: (
+          <PrivateRoute>
+            <All_Products></All_Products>
+          </PrivateRoute>
+        ),
       },
       {
         path: "/my-products",
@@ -31,9 +40,19 @@ export const router = createBrowserRouter([
         path: "/create-product",
         Component: Create_Product,
       },
+    ],
+  },
+  {
+    path: "/auth",
+    Component: AuthLayouts,
+    children: [
       {
-        path: "/all-products",
-        Component: All_Products,
+        path: "/auth/login",
+        Component: Login,
+      },
+      {
+        path: "/auth/register",
+        Component: Registration,
       },
     ],
   },
