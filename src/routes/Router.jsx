@@ -1,0 +1,40 @@
+import { createBrowserRouter } from "react-router";
+import RootLayout from "../layouts/RootLayout";
+import Home from "../pages/Home";
+import All_Products from "../pages/All_Products";
+import My_Products from "../pages/My_Products";
+import My_bids from "../pages/My_bids";
+import Create_Product from "../pages/Create_Product";
+
+export const router = createBrowserRouter([
+  {
+    path: "/",
+    Component: RootLayout,
+    children: [
+      {
+        index: true,
+        Component: Home,
+      },
+      {
+        path: "/all-products",
+        Component: All_Products,
+      },
+      {
+        path: "/my-products",
+        Component: My_Products,
+      },
+      {
+        path: "/my-bids",
+        Component: My_bids,
+      },
+      {
+        path: "/create-product",
+        Component: Create_Product,
+      },
+      {
+        path: "/all-products",
+        Component: All_Products,
+      },
+    ],
+  },
+]);
