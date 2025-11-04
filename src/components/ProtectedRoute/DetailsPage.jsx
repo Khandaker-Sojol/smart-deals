@@ -1,9 +1,15 @@
-import React from "react";
+import React, { use, useEffect, useRef, useState } from "react";
 import { useLoaderData, Link } from "react-router-dom";
+import { AuthContext } from "../../context/AuthContext";
+import { toast } from "react-toastify";
 
 const DetailsPage = () => {
   const product = useLoaderData();
+  const bidModalRef = useRef(null);
+  const [bids, setBids] = useState([]);
+  const { user } = use(AuthContext);
   console.log(product);
+  console.log(bids);
 
   const {
     image,
@@ -19,6 +25,58 @@ const DetailsPage = () => {
     created_at,
     _id,
   } = product;
+  const productId = _id;
+
+  useEffect(() => {
+    fetch(`http://localhost:3000/products/bids/${productId}`)
+      .then((res) => res.json())
+      .then((data) => {
+        console.log("Bids for this products", data);
+        setBids(data);
+      });
+  }, [productId]);
+
+  const handleBidModalOpen = () => {
+    bidModalRef.current.showModal();
+  };
+
+  const handleBidSubmit = (e) => {
+    e.preventDefault();
+    const name = e.target.name.value;
+    const email = e.target.email.value;
+    const photo = e.target.photo.value;
+    const bidPrice = e.target.bidPrice.value;
+    const contact = e.target.contact.value;
+
+    console.log({ _id, name, email, photo, bidPrice, contact });
+    const newBid = {
+      productId: _id,
+      buyer_name: name,
+      buyer_email: email,
+      buyer_image: photo,
+      buyer_contact: contact,
+      bid_price: bidPrice,
+      status: "pending",
+    };
+
+    fetch("http://localhost:3000/bids", {
+      method: "POST",
+      headers: {
+        "content-type": "application/json",
+      },
+      body: JSON.stringify(newBid),
+    })
+      .then((res) => res.json())
+      .then((data) => {
+        console.log("after placing bid", data);
+        toast.success("Your bit successfully complete");
+        // add the new bid to the state
+        newBid._id = data.insertedId;
+        const newBids = [...bids, newBid];
+        setBids(newBids);
+      });
+    e.target.reset();
+  };
 
   return (
     <div className="mx-auto px-4 lg:px-8 py-16 bg-[#F8F9FB]">
@@ -118,9 +176,154 @@ const DetailsPage = () => {
             </div>
           </div>
 
-          <button className="w-full mt-auto bg-gradient-to-r from-[#5E3CFB] to-[#8B5CF6] text-white font-semibold py-3 rounded-xl hover:opacity-90 transition cursor-pointer">
+          <button
+            onClick={handleBidModalOpen}
+            className="w-full mt-auto bg-gradient-to-r from-[#5E3CFB] to-[#8B5CF6] text-white font-semibold py-3 rounded-xl hover:opacity-90 transition cursor-pointer"
+          >
             I Want Buy This Product
           </button>
+
+          {/* Open the modal using document.getElementById('ID').showModal() method */}
+          <dialog
+            ref={bidModalRef}
+            className="modal modal-bottom sm:modal-middle"
+          >
+            <div className="modal-box py-10">
+              <h3 className="font-bold text-2xl text-center my-8">
+                Give Seller Your Offered Price
+              </h3>
+
+              <form onSubmit={handleBidSubmit}>
+                <fieldset className="fieldset">
+                  <div className="flex gap-4">
+                    <div>
+                      <label className="label font-medium text-sm">
+                        Buyer Name
+                      </label>
+                      <input
+                        type="text"
+                        name="name"
+                        readOnly
+                        className="input"
+                        // placeholder="Your Name"
+                        defaultValue={user?.displayName}
+                      />
+                    </div>
+                    <div>
+                      <label className="label font-medium text-sm">
+                        Buyer Email
+                      </label>
+                      <input
+                        type="email"
+                        name="email"
+                        readOnly
+                        className="input"
+                        placeholder="Email"
+                        defaultValue={user?.email}
+                      />
+                    </div>
+                  </div>
+
+                  <label className="label font-medium text-sm">
+                    Buyer Image URL
+                  </label>
+                  <input
+                    type="text"
+                    name="photo"
+                    readOnly
+                    className="input w-full"
+                    placeholder="https://...your_img_url"
+                    defaultValue={user?.photoURL}
+                  />
+                  <label className="label font-medium text-sm">
+                    Enter Your bid Price
+                  </label>
+                  <input
+                    type="text"
+                    name="bidPrice"
+                    className="input w-full"
+                    placeholder="Enter your offer amount"
+                  />
+                  <label className="label font-medium text-sm">
+                    Contact Number
+                  </label>
+                  <input
+                    type="text"
+                    name="contact"
+                    className="input w-full"
+                    placeholder="e.g. +88016056-54180"
+                  />
+                </fieldset>
+                <div className="text-end space-x-2 modal-action pb-12">
+                  {/* if there is a button in form, it will close the modal */}
+                  <form method="dialog">
+                    <button className="btn mt-4  border-purple-400 text-purple-500 hover:bg-purple-500 hover:text-white transition">
+                      Cancel
+                    </button>
+                  </form>
+                  <button className="btn btn-primary mt-4">Submit Bid</button>
+                </div>
+              </form>
+            </div>
+          </dialog>
+        </div>
+      </div>
+      {/* Bids section */}
+      <div className="mt-8">
+        <h3 className="text-3xl font-semibold text-gray-900 mb-4">
+          Bids for this Product:{" "}
+          <span className="text-gradient">{bids.length}</span>
+        </h3>
+        <div className="bg-white rounded-lg shadow-lg">
+          <table className="min-w-full">
+            <thead className="bg-[#F0F1F7]">
+              <tr>
+                <th className="text-left text-sm font-semibold p-4">SL No</th>
+                <th className="text-left text-sm font-semibold p-4">Product</th>
+                <th className="text-left text-sm font-semibold p-4">Buyer</th>
+                <th className="text-left text-sm font-semibold p-4">
+                  Bid Price
+                </th>
+                <th className="text-left text-sm font-semibold p-4">Actions</th>
+              </tr>
+            </thead>
+            <tbody>
+              {bids.map((bid, index) => (
+                <tr key={bid._id} className="border-t border-gray-200">
+                  <td className="p-4 text-sm">{index + 1}</td>
+                  <td className="p-4 text-sm ">
+                    <div className="min-h-10 bg-gray-300 rounded w-14"></div>
+                    <div>
+                      <p>{title}</p>
+                      <p>
+                        ${price_min}-${price_max}
+                      </p>
+                    </div>
+                  </td>
+                  <td className="p-4 text-sm flex items-center gap-4 mt-4">
+                    <img
+                      className="rounded-full w-12"
+                      src={bid.buyer_image}
+                      alt=""
+                    />
+                    <div>
+                      <p>{bid.buyer_name}</p>
+                      <p>{bid.buyer_email}</p>
+                    </div>
+                  </td>
+                  <td className="p-4 text-sm">${bid.bid_price}</td>
+                  <td className="p-4  flex gap-2">
+                    <button className="text-green-500 hover:text-green-700 text-xs py-1 px-2 rounded-md border  border-green-500">
+                      Accept Offer
+                    </button>
+                    <button className="text-red-500 hover:text-red-700 text-xs py-1 px-2 rounded-md border border-red-500">
+                      Reject Offer
+                    </button>
+                  </td>
+                </tr>
+              ))}
+            </tbody>
+          </table>
         </div>
       </div>
     </div>
