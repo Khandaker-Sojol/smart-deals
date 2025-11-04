@@ -1,10 +1,11 @@
 import React from "react";
 import thambnailCard from "/images/thumbnail-card.png";
+import { Link } from "react-router-dom";
 
 const ProductCard = ({ product }) => {
   console.log(product);
 
-  const { image, title, condition, price_max, price_min } = product;
+  const { image, title, condition, price_max, price_min, _id } = product;
 
   return (
     <div className="shadow bg-[#FFFFFF] border border-gray-300 rounded">
@@ -17,9 +18,12 @@ const ProductCard = ({ product }) => {
           $ {price_min} - {price_max}
         </p>
 
-        <button className="w-full border py-3 rounded font-semibold border-purple-400 text-purple-500 cursor-pointer hover:bg-purple-500 hover:text-white transition">
+        <Link
+          to={`/all-products/${_id}`}
+          className="px-44 border py-3 rounded font-semibold border-purple-400 text-purple-500 cursor-pointer hover:bg-purple-500 hover:text-white transition"
+        >
           View Details
-        </button>
+        </Link>
       </div>
     </div>
   );

@@ -9,6 +9,7 @@ import Login from "../pages/Login";
 import Registration from "../pages/Registration";
 import AuthLayouts from "../layouts/AuthLayouts";
 import PrivateRoute from "../components/ProtectedRoute/PrivateRoute";
+import DetailsPage from "../components/ProtectedRoute/DetailsPage";
 
 export const router = createBrowserRouter([
   {
@@ -27,6 +28,18 @@ export const router = createBrowserRouter([
             <All_Products></All_Products>
           </PrivateRoute>
         ),
+      },
+      {
+        path: "/all-products/:id",
+        loader: async ({ params }) => {
+          const res = await fetch(
+            `http://localhost:3000/products/${params.id}`
+          );
+          if (!res.ok) throw new Error("Failed to fetch product");
+          return res.json(); // <-- crucial
+        },
+        element: <DetailsPage></DetailsPage>,
+        errorElement: <div>Product not found!</div>,
       },
       {
         path: "/my-products",
