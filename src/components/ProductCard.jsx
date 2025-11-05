@@ -20,7 +20,7 @@ const ProductCard = ({ product }) => {
 
         <Link
           to={`/all-products/${_id}`}
-          className="px-24 border py-3 rounded font-semibold border-purple-400 text-purple-500 cursor-pointer hover:bg-purple-500 hover:text-white transition"
+          className="px-24 md:px-29 border py-3 rounded font-semibold border-purple-400 text-purple-500 cursor-pointer hover:bg-purple-500 hover:text-white transition"
         >
           View Details
         </Link>

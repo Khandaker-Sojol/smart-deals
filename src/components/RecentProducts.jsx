@@ -11,7 +11,7 @@ const RecentProducts = ({ recentProductsPromise }) => {
       <h1 className="text-center text-4xl md:text-5xl font-bold">
         Recent <span className="text-gradient">Products</span>
       </h1>
-      <div className="grid md:grid-cols-3 gap-6 py-5">
+      <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-6 py-5">
         {recentProducts.map((product) => (
           <ProductCard key={product._id} product={product}></ProductCard>
         ))}

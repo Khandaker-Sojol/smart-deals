@@ -73,6 +73,7 @@ const DetailsPage = () => {
         // add the new bid to the state
         newBid._id = data.insertedId;
         const newBids = [...bids, newBid];
+        newBids.sort((a, b) => b.bid_price - a.bid_price);
         setBids(newBids);
       });
     e.target.reset();
@@ -243,6 +244,7 @@ const DetailsPage = () => {
                     name="bidPrice"
                     className="input w-full"
                     placeholder="Enter your offer amount"
+                    required
                   />
                   <label className="label font-medium text-sm">
                     Contact Number
